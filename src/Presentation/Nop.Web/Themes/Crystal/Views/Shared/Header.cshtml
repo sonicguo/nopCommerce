@@ -1,0 +1,121 @@
+﻿@using Nop.Core
+@using Nop.Core.Domain.Customers
+@using Nop.Core.Infrastructure
+@using Nop.Services.Localization
+@using Nop.Web.Framework.Themes
+@{
+    //logo path
+    var currentThemeName = EngineContext.Current.Resolve<IThemeContext>().WorkingThemeName;
+    var logoPath = "~/Themes/" + currentThemeName + "/Content/images/logo.png";
+
+    //store name
+    var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
+
+    var currentCustomer = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer;
+}
+
+<div class="header">
+    @Html.Widget("header")
+    <div class="header-upper container-fluid">
+        <div class="row">
+            <div class="header-selectors-wrapper col-md-3 col-xs-4">
+                <div class="hidden-sm hidden-xs" id="header-selectors">
+                    @Html.Action("TaxTypeSelector", "Common")
+
+                    @Html.Action("CurrencySelector", "Common")
+
+                    @Html.Action("LanguageSelector", "Common")
+
+                    @Html.Widget("header_selectors")
+                </div>
+            </div>
+            <div class="search-box store-search-box col-md-4">
+                <div class="hidden-sm hidden-xs" id="header-searchbox">
+                    @Html.Action("SearchBox", "Catalog")
+                </div>
+            </div>
+            <div class="header-links-wrapper col-md-5 ">
+                <div class="hidden-sm hidden-xs" id="header-headerlinks">
+                    @Html.Action("HeaderLinks", "Common")
+                </div>
+            </div>
+        </div>
+        <div class="row hidden-lg hidden-md mobile-links text-center">
+            <a class="col-xs-2 mobile-icon" href="#header-selectors">
+                <i class="fa fa-wrench"></i>
+            </a>
+            <a class="col-xs-2 mobile-icon" href="#header-searchbox">
+                <i class="fa fa-search"></i>
+            </a>
+            <a class="col-xs-2" href="@Url.RouteUrl("Wishlist")">
+                <i class="fa fa-heart"></i>
+            </a>
+            <a class="col-xs-2" href="@Url.RouteUrl("ShoppingCart")">
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+            @if (currentCustomer.IsRegistered())
+            {
+                <a class="col-xs-4 mobile-icon" href="#customer-navigation">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <div id="customer-navigation" class="hidden">
+                    @Html.Action("CustomerNavigation", "Customer")
+                    <div class="list-box">
+                        <ul class="list">
+                            <li>
+                                <a href="@Url.RouteUrl("Logout")"><i class="fa fa-sign-out"></i> @T("Account.Logout")</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <a class="col-xs-2" href="/register">
+                    <i class="fa fa-user-plus"></i>
+                </a>
+                <a class="col-xs-2" href="/login">
+                    <i class="fa fa-sign-in"></i>
+                </a>
+            }
+            <script type="text/javascript">
+                $(".mobile-icon").on("click", function (e) {
+                    $(".mobile-icon").removeClass("active");
+                    $(this).addClass("active");
+                    var target = $($(this).attr("href"));
+                    $(".mobile-icon-popup").removeClass("mobile-icon-popup");
+                    target.addClass("mobile-icon-popup");
+                    target.find("input").first().focus();
+                    $("body").addClass("mobile");
+
+                    $(".mobile-icon-popup").on("click", function (e) {
+                        if (e.target.tagName == "DIV") {
+                            $("body").removeClass("mobile");
+                            $(".mobile-icon-popup").removeClass("mobile-icon-popup");
+                            $(".mobile-icon").removeClass("active");
+                        }
+
+                    });
+                    e.preventDefault();
+                });
+
+                $(window).resize(function () {
+                    $(".mobile-icon-popup").removeClass("mobile-icon-popup");
+                    $(".mobile-icon").removeClass("active");
+
+                });
+            </script>
+        </div>
+    </div>
+    <div class="header-lower container-fluid">
+        <div class="header-logo col-md-4 text-center-sm text-center-xs">
+            <a href="@Url.RouteUrl("HomePage")">
+                <img title="" alt="@storeName" src="@Url.Content(logoPath)">
+            </a>
+        </div>
+        <div class="header-menu text-right text-left-xs col-md-12 col-lg-8 text-left-sm">
+            @Html.Action("TopMenu", "Catalog")
+        </div>
+    </div>
+</div>

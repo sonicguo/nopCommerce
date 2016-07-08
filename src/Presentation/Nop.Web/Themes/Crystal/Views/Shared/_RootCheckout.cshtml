@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_Root.Head.cshtml";
+}
+@Html.Widget("body_start_html_tag_after")
+@Html.Partial("_Notifications")
+@Html.Action("JavaScriptDisabledWarning", "Common")
+@Html.Partial("OldInternetExplorerWarning")
+
+<div class="master-wrapper-page">
+    @Html.Partial("HeaderCheckout")
+    <div class="master-wrapper-content">
+        @Html.Widget("content_before")
+
+        <div class="master-column-wrapper container">
+            @RenderBody()
+        </div>
+        @Html.Widget("content_after")
+    </div>
+    @Html.Action("Footer", "Common")
+</div>
+@Html.Action("EuCookieLaw", "Common")
+@Html.Widget("body_end_html_tag_before")

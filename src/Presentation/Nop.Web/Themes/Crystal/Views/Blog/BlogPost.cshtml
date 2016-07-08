@@ -1,0 +1,15 @@
+﻿@model BlogPostModel
+@using Nop.Web.Models.Blogs;
+@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+
+    //title
+    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Title);
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+}
+<div class="container">
+    <h3>
+        Blogs are not supported by this theme
+    </h3>
+</div>

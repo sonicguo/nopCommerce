@@ -1,0 +1,36 @@
+﻿@model IList<ManufacturerModel>
+@{
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Manufacturers").Text);
+}
+@using Nop.Web.Models.Catalog;
+<div class="page manufacturer-list-page">
+    <div class="page-title">
+        <h3>@T("Manufacturers.List")</h3>
+    </div>
+    <div class="page-body">
+        <div class="manufacturer-grid">
+            <div class="item-grid rows">
+                @foreach (var item in Model)
+                {
+                    <div class="item-box text-center col-md-4 col-sm-6">
+                        <div class="manufacturer-item">
+                            <h4 class="title">
+                                <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
+                                    @item.Name
+                                </a>
+                            </h4>
+                            <div class="picture">
+                                <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
+                                    <img alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

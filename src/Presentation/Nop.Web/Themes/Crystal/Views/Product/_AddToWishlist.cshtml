@@ -1,0 +1,11 @@
+﻿@model ProductDetailsModel.AddToCartModel
+@using Nop.Web.Models.Catalog;
+@using Nop.Core.Domain.Orders;
+@if (!Model.DisableWishlistButton && Model.UpdatedShoppingCartItemId == 0)
+{
+    <div class="add-to-wishlist">
+        <button id="add-to-wishlist-button-@Model.ProductId" class="button-secondary add-to-wishlist-button" data-productid="@Model.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.Wishlist})', '#product-details-form');return false;">
+            <i class="fa fa-heart"></i>  @T("ShoppingCart.AddToWishlist")
+        </button>
+    </div>
+}

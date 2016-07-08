@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+}
+<div class="page home-page">
+    <div class="page-body">
+        @Html.Widget("home_page_top")
+        <div class="container">
+            @Html.Action("TopicBlock", "Topic", new { systemName = "HomePageText" })
+        </div>
+        @Html.Widget("home_page_before_categories")
+        <div class="container">
+            @Html.Action("HomepageCategories", "Catalog")
+        </div>
+        @Html.Widget("home_page_before_products")
+        <div class="container">
+            @Html.Action("HomepageProducts", "Product")
+        </div>
+        @Html.Widget("home_page_before_best_sellers")
+        <div class="container">
+            @Html.Action("HomepageBestSellers", "Product")
+        </div>
+        @Html.Widget("home_page_before_news")
+        <div class="container">
+            @Html.Action("HomePageNews", "News")
+        </div>
+        @Html.Widget("home_page_before_poll")
+        <div class="container">
+            @Html.Action("HomePagePolls", "Poll")
+        </div>
+
+        @Html.Widget("home_page_bottom")
+    </div>
+</div>

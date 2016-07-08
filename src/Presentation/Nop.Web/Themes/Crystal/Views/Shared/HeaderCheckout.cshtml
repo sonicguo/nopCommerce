@@ -1,0 +1,26 @@
+﻿@using Nop.Core
+@using Nop.Core.Infrastructure
+@using Nop.Services.Localization
+@using Nop.Web.Framework.Themes
+@{
+    //logo path
+    var currentThemeName = EngineContext.Current.Resolve<IThemeContext>().WorkingThemeName;
+    var logoPath = "~/Themes/" + currentThemeName + "/Content/images/logo.png";
+
+    //store name
+    var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
+}
+<div class="header text-center-xs">
+    @Html.Widget("header")
+   
+    <div class="header-lower container">
+        <div class="header-logo col-md-4">
+            <a href="@Url.RouteUrl("HomePage")">
+                <img title="" alt="@storeName" src="@Url.Content(logoPath)">
+            </a>
+        </div>
+        <div class="header-menu text-right col-md-8 text-right">
+            <i class="fa fa-lock"></i> Secure Checkout
+        </div>
+    </div>
+</div>

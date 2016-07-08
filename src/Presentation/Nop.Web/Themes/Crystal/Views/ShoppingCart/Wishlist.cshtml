@@ -1,0 +1,229 @@
+@model WishlistModel
+@using Nop.Core
+@using Nop.Core.Domain.Tax
+@using Nop.Core.Infrastructure
+@using Nop.Web.Models.ShoppingCart
+@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Wishlist").Text);
+}
+<div class="page wishlist-page container">
+    <div class="page-title">
+        <h3>
+            @if (Model.IsEditable)
+            {
+                @T("Wishlist")
+            }
+            else
+            {
+                @String.Format(T("Wishlist.WishlistOf").Text, Model.CustomerFullname)
+            }
+        </h3>
+    </div>
+    <div class="page-body">
+        @if (Model.Items.Count > 0)
+        {
+            <div class="wishlist-content">
+                @if (Model.Warnings.Count > 0)
+                {
+                    <div class="message-error">
+                        <ul>
+                            @foreach (var warning in Model.Warnings)
+                            {
+                                <li>@warning</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                @using (Html.BeginRouteForm("Wishlist", FormMethod.Post))
+                {
+                    <div class="cart">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div id="products-table">
+                                <div class="row heading hidden-xs">
+                                    <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs text-left">
+                                        <div class="title">
+                                            @T("ShoppingCart.Product(s)")
+                                        </div>
+                                    </div><!--.col-lg-3-->
+                                    <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs text-center">
+                                        <div class="title">
+                                            @T("ShoppingCart.UnitPrice")
+                                        </div>
+                                    </div><!--.col-lg-2-->
+                                    <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs text-center">
+                                        <div class="title">
+                                            @T("ShoppingCart.Quantity")
+                                        </div>
+                                    </div><!--.col-lg-2-->
+                                    <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs text-right">
+                                        <div class="title">
+                                            @T("ShoppingCart.ItemTotal")
+                                        </div>
+                                    </div><!--.col-lg-2-->
+                                    @if (Model.DisplayAddToCart)
+                                    {
+                                        <div class="col-lg-2 col-md-2 col-sm-2 text-center hidden-xs">
+                                            <div class="title">
+                                                @T("ShoppingCart.AddToCart")
+                                            </div>
+                                        </div><!--.col-lg-2-->
+                                    }
+
+
+                                    <div class="col-lg-1 col-md-1 col-sm-1 text-center hidden-xs">
+                                        <div class="title">
+                                            @T("ShoppingCart.Remove")
+                                        </div>
+                                    </div><!--.col-lg-1-->
+
+
+                                </div><!--.row heading-->
+                                @foreach (var item in Model.Items)
+                                {
+                                    <div class="row cart-item">
+                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 product-title">
+                                            @if (Model.ShowProductImages)
+                                            {
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-2 nopadding">
+                                                    <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
+                                                </div><!--.col-lg-3-->
+                                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-10 ">
+                                                    <a href="@Url.RouteUrl("Product", new { SeName = item.ProductSeName })" class="product-name">@item.ProductName</a>
+                                                </div><!--.col-lg-9-->
+
+
+                                            }
+                                            else
+                                            {
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopadding">
+                                                    <a href="@Url.RouteUrl("Product", new { SeName = item.ProductSeName })" class="product-name">@item.ProductName</a>
+                                                </div><!--.col-lg-12-->
+                                            }
+                                        </div><!--.colg-lg-5-->
+
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 quantity col-lg-push-2 col-md-push-2 col-sm-push-2 text-center">
+                                            <span class="hidden-lg hidden-md hidden-sm">@T("ShoppingCart.Quantity"):</span>
+                                            @if (Model.IsEditable)
+                                            {
+                                                if (item.AllowedQuantities.Count > 0)
+                                                {
+                                                    <select name="itemquantity@(item.Id)" class="qty-dropdown">
+                                                        @foreach (var qty in item.AllowedQuantities)
+                                                        {
+                                                            <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
+                                                        }
+                                                    </select>
+                                                }
+                                                else
+                                                {
+                                                    <input name="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" data-input="number" class="qty-input" />
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <span>@item.Quantity</span>
+                                            }
+                                        </div><!--.col-lg-2-->
+
+
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 unit-price col-lg-pull-2 col-md-pull-2 col-sm-pull-2 text-center">
+                                            <span class="hidden-lg hidden-md hidden-sm">@T("ShoppingCart.UnitPrice"):</span><span class="product-unit-price">@item.UnitPrice</span>
+                                        </div><!--.col-lg-2-->
+
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 sub-total text-right">
+                                            <span class="hidden-lg hidden-md hidden-sm">@T("ShoppingCart.ItemTotal"):</span><span class="product-subtotal">@item.SubTotal</span>
+                                            @if (!String.IsNullOrEmpty(item.Discount))
+                                            {
+                                                <div class="discount">
+                                                    @T("ShoppingCart.ItemYouSave"): @item.Discount
+                                                </div>
+                                            }
+
+                                        </div><!--.col-lg-2-->
+                                        @if (Model.DisplayAddToCart)
+                                        {
+                                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 text-center-not-xs">
+
+                                                <input type="checkbox" name="addtocart" value="@(item.Id)" />
+                                                <span class="hidden-lg hidden-sm hidden-md">@T("ShoppingCart.AddToCart")</span>
+                                            </div><!--.col-lg-2-->
+
+                                        }
+
+                                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-6 text-center-not-xs">
+                                            @if (Model.IsEditable)
+                                            {
+                                                <input type="checkbox" name="removefromcart" value="@(item.Id)" />
+                                                <span class="hidden-lg hidden-sm hidden-md">@T("ShoppingCart.Remove")</span>
+                                            }
+                                        </div><!--.col-lg-1-->
+
+                                    </div><!--.row cartitem-->
+                                }
+
+                            </div>
+
+                        </div><!--.col-lg-8-->
+
+
+
+                    </div><!--.cart-->
+                    if (Model.Items.Count > 0 && Model.DisplayTaxShippingInfo)
+                    {
+                        var inclTax = EngineContext.Current.Resolve<IWorkContext>().TaxDisplayType == TaxDisplayType.IncludingTax;
+                        //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                        //of course, you can modify appropriate locales to include VAT info there
+                        <div class="tax-shipping-info">
+                            @T(inclTax ? "Wishlist.TaxShipping.InclTax" : "Wishlist.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = Html.GetTopicSeName("shippinginfo") }))
+                        </div>
+                    }
+                    <div class="clearfix"></div>
+                    <div class="buttons">
+                        <div class="common-buttons text-center">
+                            @if (Model.IsEditable && Model.EmailWishlistEnabled)
+                            {
+                                <button type="button" name="addtocartbutton" onclick="setLocation('@Url.RouteUrl("EmailWishlist")')" class="with-glyph normal-secondary email-a-friend-wishlist-button">
+                                    <span class="glyphicon glyphicon-envelope"></span>
+                                    <span class="link-label hidden-xs">@T("Wishlist.EmailAFriend")</span>
+                                </button>
+                            }
+                            @if (Model.IsEditable)
+                            {
+                                <button type="submit" name="updatecart" class="with-glyph normal-secondary update-wishlist-button" value="@T("Wishlist.UpdateCart")">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                    <span class="link-label hidden-xs">@T("Wishlist.UpdateCart")</span>
+                                </button>
+                            }
+                            @if (Model.DisplayAddToCart)
+                            {
+                                <button type="submit" name="addtocartbutton" class="with-glyph normal-primary wishlist-add-to-cart-button" value="@T("ShoppingCart.AddToCart")">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                                    <span class="link-label hidden-xs">@T("ShoppingCart.AddToCart")</span>
+                                </button>
+
+                            }
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="no-data">
+                @T("Wishlist.CartIsEmpty")
+            </div>
+        }
+        @if (Model.IsEditable && Model.Items.Count > 0)
+        {
+            <div class="share-info">
+                <span class="share-label">@T("Wishlist.YourWishlistURL"):</span>
+                <a href="@Url.RouteUrl("Wishlist", new { customerGuid = Model.CustomerGuid })" class="share-link">@Url.RouteUrl("Wishlist", new { customerGuid = Model.CustomerGuid }, "http")</a>
+            </div>
+        }
+    </div>
+</div>

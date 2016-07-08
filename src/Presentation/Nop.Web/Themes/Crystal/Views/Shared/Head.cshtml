@@ -1,0 +1,40 @@
+﻿@using Nop.Core;
+@using Nop.Core.Infrastructure
+@using Nop.Web.Framework.Themes
+@using Nop.Web.Framework.UI
+@{  
+    var supportRtl = EngineContext.Current.Resolve<IWorkContext>().WorkingLanguage.Rtl;
+    var themeName = EngineContext.Current.Resolve<IThemeContext>().WorkingThemeName;
+
+    //bootstrap
+    Html.AddCssFileParts(string.Format("~/Themes/{0}/Content/lib/bootstrap/css/bootstrap.min.css", themeName));
+    Html.AddCssFileParts(string.Format("~/Themes/{0}/Content/lib/bootstrap/bootstrap-extensions.css", themeName));
+    Html.AddCssFileParts(string.Format("~/Themes/{0}/Content/lib/font-awesome/css/font-awesome.min.css", themeName));
+    
+    
+    //add browser specific CSS files
+    var browser = Request.Browser;
+    if (browser.Browser == "IE" && browser.MajorVersion == 8)
+    {
+        Html.AddCssFileParts(string.Format("~/Themes/{0}/Content/css/ie8.css", themeName));
+    }
+    //add main CSS file
+    if (supportRtl)
+    {
+        Html.AddCssFileParts(string.Format("~/Themes/{0}/Content/css/styles.rtl.css", themeName));
+    }
+    else
+    {
+        Html.AddCssFileParts(string.Format("~/Themes/{0}/Content/css/styles.min.css", themeName));
+    }
+    
+    //add jQuery UI css file
+    Html.AddCssFileParts("~/Content/jquery-ui-themes/smoothness/jquery-ui-1.10.3.custom.min.css");
+
+    if (browser.Browser == "IE" && browser.MajorVersion == 8)
+    {
+        Html.AddScriptParts("~/Scripts/selectivizr.min.js");
+        Html.AddScriptParts("~/Scripts/respond.min.js");
+    }
+}
+
